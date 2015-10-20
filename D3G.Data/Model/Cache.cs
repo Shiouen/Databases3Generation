@@ -11,17 +11,17 @@ namespace D3G.Data.Model {
         public int Terrain { get; set; }    // enum
         public int Size { get; set; }       // enum
         public string Instructions { get; set; }
-        public int Type { get; set; }       // enum
+        public int Type { get; set; }       // enum Single = 0, Multi
         public int UserId { get; set; }
 
         public static Cache Generate(int index, int userId, Random random) {
             return new Cache {
                 Id = index,
-                Difficulty = random.Next(0,4),
-                Terrain = random.Next(0,4),
-                Size = random.Next(0,3),
+                Difficulty = random.Next(0, 4),
+                Terrain = random.Next(0, 4),
+                Size = random.Next(0, 3),
                 Instructions = string.Format("instruction{0}", index),
-                Type = random.Next(0, 1),
+                Type = (index % 10 == 0) ? 1 : 0,
                 UserId = userId
             };
         }

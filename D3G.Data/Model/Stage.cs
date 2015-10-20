@@ -16,18 +16,17 @@ namespace D3G.Data.Model {
         public double Longitude { get; set; }
         public double Latitude { get; set; }
 
-        public static Stage Generate(int index) {
-            Random random = new Random();
+        public static Stage Generate(int index, Random random) {
             return new Stage {
                 Id = index,
-                Number = random.Next(1,5),
+                Number = random.Next(1, 5),
                 Description = string.Format("description{0}", index),
-                Type = random.Next(0,1),
-                Visibility = random.Next(0,2),
+                Type = random.Next(0, 1),
+                Visibility = random.Next(0, 2),
                 City = string.Format("city{0}", index),
                 Country = string.Format("country{0}", index),
-                Longitude = random.NextDouble() * 5,
-                Latitude = random.NextDouble() * 5,
+                Longitude = random.NextDouble(),
+                Latitude = random.NextDouble(),
             };
         }
 

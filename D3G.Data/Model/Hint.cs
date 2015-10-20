@@ -12,13 +12,10 @@ namespace D3G.Data.Model {
         public int CacheId { get; set; }
 
         public static Hint Generate(int index, int cacheId) {
-            Random random = new Random();
-            bool isSpoiler = false;
-            if (random.NextDouble() >= 0.5) isSpoiler = true;
             return new Hint {
                 Id = index,
                 Message = string.Format("message{0}", index),
-                IsSpoiler = isSpoiler,
+                IsSpoiler = (index % 2 == 0) ? true : false,
                 CacheId = cacheId
             };
         }

@@ -11,15 +11,10 @@ namespace D3G.Data.Model {
         public bool IsTakenOut { get; set; }
 
         public static LogTrackable Generate(int index, int logId, int trackableId) {
-            Random random = new Random();
-            bool isTakenOut = false;
-
-            if (random.NextDouble() >= 0.5) { isTakenOut = true; }
-
             return new LogTrackable {
                 LogId = logId,
                 TrackableId = trackableId,
-                IsTakenOut = isTakenOut,
+                IsTakenOut = (index % 2 == 0) ? false : true,
             };
         }
 

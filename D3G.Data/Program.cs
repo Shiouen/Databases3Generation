@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using D3G.Data.Model;
 using D3G.Data.Extensions;
+using D3G.Data.Model;
+using D3G.Data.Utility;
 
 namespace D3G.Data {
     public class Program {
@@ -18,7 +19,7 @@ namespace D3G.Data {
         public List<Log> Logs { get; set; }
         public List<Quest> Quests { get; set; }
         public List<Trackable> Trackables { get; set; }
-        public List<LogTrackable> LogTrackable { get; set; }
+        public List<LogTrackable> LogTrackables { get; set; }
         public List<Subscription> Subscriptions { get; set; }
         public List<Cache> Caches { get; set; }
         public List<CacheAttribute> CacheAttributes { get; set; }
@@ -32,7 +33,7 @@ namespace D3G.Data {
             this.Logs = new List<Log>();
             this.Quests = new List<Quest>();
             this.Trackables = new List<Trackable>();
-            this.LogTrackable = new List<LogTrackable>();
+            this.LogTrackables = new List<LogTrackable>();
             this.Subscriptions = new List<Subscription>();
             this.Caches = new List<Cache>();
             this.CacheAttributes = new List<CacheAttribute>();
@@ -54,31 +55,53 @@ namespace D3G.Data {
         }
         
         public Program GenerateDatabase(int userAmount) {
-            int logAmount = (userAmount + 1) * 10;
             Random random = new Random();
 
-            int userId = 1;
-            int questId = 1;
-            int cacheId = 1;
+            int cacheAmount = userAmount / 10;
+            int logAmount = userAmount * 10;
+            int trackableAmount = 1000;
 
-            for (int logId = 1; logId < logAmount; ++logId) {
+            int cacheId = 1;
+            int logId = 1;
+            int logTrackableId = 1;
+            int messageId = 1;
+            int questId = 1;
+            int userId = 1;
+
+            // logs, users, quests and caches
+            for (logId = 1; logId <= logAmount; ++logId) {
+                // add a quest for half of the logs
+                // add quest and go to next quest
+                if (logId % 2 == 0) { this.Quests.Add(Quest.Generate(questId++, userId, logId)); }
+
+                // add log
+                this.Logs.Add(Log.Generate(logId, userId, cacheId, random));
 
                 // change user every 10 logs
                 // add user and go to next user
-                if (logId % 10 == 0) { 
-                    this.Users.Add(User.Generate(userId++));
+                if (logId % 10 == 0) {
+                    this.Users.Add(User.Generate(userId));
 
                     // add a cache to 1/10th of the users
                     // add cache and go to next cache
                     if (userId % 10 == 0) { this.Caches.Add(Cache.Generate(cacheId++, userId, random)); }
+
+                    // add a message to 1/100th of the users
+                    // add message and go to next message
+                    if (userId % 100 == 0) { this.Messages.Add(Message.Generate(messageId, userId)); }
+
+                    ++userId;
                 }
+            }
 
-                // add log
-                //this.Logs.Add(Log.Generate(i, userId, 1));
+            logId = 1;
 
-                // add a quest for half of the logs
-                // add quest and go to next quest
-                if (logId % 2 == 0) { this.Quests.Add(Quest.Generate(questId++, userId, logId)); }
+            for (int trackableId = 1; trackableId <= trackableAmount; ++trackableId) {
+                cacheId = random.Next(1, cacheAmount);
+                userId = random.Next(1, userAmount);
+
+                this.Trackables.Add(Trackable.Generate(trackableId, userId, cacheId));
+                // this.LogTrackables.Add(LogTrackable.Generate(logTrackableId++, logId))
             }
 
             return this;
@@ -99,7 +122,7 @@ namespace D3G.Data {
             this.Subscriptions.BuildAsQuery(builder, "subscription");
             this.Trackables.BuildAsQuery(builder, "trackable");
             this.Logs.BuildAsQuery(builder, "log");
-            this.LogTrackable.BuildAsQuery(builder, "log_trackable");
+            this.LogTrackables.BuildAsQuery(builder, "log_trackable");
             this.Quests.BuildAsQuery(builder, "quest");
 
             using (StreamWriter writer = new StreamWriter(this.Path)) {

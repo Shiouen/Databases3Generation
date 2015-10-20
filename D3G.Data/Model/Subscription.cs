@@ -10,8 +10,7 @@ namespace D3G.Data.Model {
         public int CacheId { get; set; }
         public int Channel { get; set; }    // enum
 
-        public static Subscription Generate(int index, int cacheId) {
-            Random random = new Random();
+        public static Subscription Generate(int index, int cacheId, Random random) {
             return new Subscription {
                 Id = index,
                 CacheId = cacheId,

@@ -13,8 +13,7 @@ namespace D3G.Data.Model {
         public int UserId { get; set; }
         public int CacheId { get; set; }
 
-        public static Log Generate(int index, int userId, int cacheId) {
-            Random random = new Random();
+        public static Log Generate(int index, int userId, int cacheId, Random random) {
             return new Log {
                 Id = index,
                 Type = random.Next(0,2),
