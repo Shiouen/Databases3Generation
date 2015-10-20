@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 namespace D3G.Data.Extensions {
     public static class ListExtensions {
         public static void BuildAsQuery<T>(this ICollection<T> collection, StringBuilder builder, string tableName) {
+            if (collection.Count == 0) { return; }
+
             int id = 1;
 
             string insert = string.Format("insert into {0} values", tableName);
@@ -30,6 +32,7 @@ namespace D3G.Data.Extensions {
 
                 ++id;
             }
+            builder.AppendLine();
         }
     }
 }

@@ -45,7 +45,7 @@ namespace D3G.Data {
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             new Program()
-                .GenerateDatabase(userAmount : 1000000)
+                .GenerateDatabase(userAmount : 100000)
                 .WriteInserts(cleanUp : true);
 
             stopwatch.Stop();
@@ -54,8 +54,31 @@ namespace D3G.Data {
         }
         
         public Program GenerateDatabase(int userAmount) {
-            for (int i = 1; i < userAmount + 1; ++i) {
-                this.Users.Add(User.Generate(i));
+            int logAmount = (userAmount + 1) * 10;
+            Random random = new Random();
+
+            int userId = 1;
+            int questId = 1;
+            int cacheId = 1;
+
+            for (int logId = 1; logId < logAmount; ++logId) {
+
+                // change user every 10 logs
+                // add user and go to next user
+                if (logId % 10 == 0) { 
+                    this.Users.Add(User.Generate(userId++));
+
+                    // add a cache to 1/10th of the users
+                    // add cache and go to next cache
+                    if (userId % 10 == 0) { this.Caches.Add(Cache.Generate(cacheId++, userId, random)); }
+                }
+
+                // add log
+                //this.Logs.Add(Log.Generate(i, userId, 1));
+
+                // add a quest for half of the logs
+                // add quest and go to next quest
+                if (logId % 2 == 0) { this.Quests.Add(Quest.Generate(questId++, userId, logId)); }
             }
 
             return this;
@@ -65,7 +88,19 @@ namespace D3G.Data {
             StringBuilder builder = new StringBuilder();
             this.Path = String.Format("{0}../../{1}", AppDomain.CurrentDomain.BaseDirectory, "Files/inserts.sql");
 
+            /* order is IMPORTANT */
             this.Users.BuildAsQuery(builder, "user");
+            this.Messages.BuildAsQuery(builder, "message");
+            this.Caches.BuildAsQuery(builder, "cache");
+            this.CacheAttributes.BuildAsQuery(builder, "cache_attribute");
+            this.Attributes.BuildAsQuery(builder, "attribute");
+            this.Hints.BuildAsQuery(builder, "hint");
+            this.Stages.BuildAsQuery(builder, "stage");
+            this.Subscriptions.BuildAsQuery(builder, "subscription");
+            this.Trackables.BuildAsQuery(builder, "trackable");
+            this.Logs.BuildAsQuery(builder, "log");
+            this.LogTrackable.BuildAsQuery(builder, "log_trackable");
+            this.Quests.BuildAsQuery(builder, "quest");
 
             using (StreamWriter writer = new StreamWriter(this.Path)) {
                 writer.Write(builder.ToString());

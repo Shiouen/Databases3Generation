@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace D3G.Data.Model {
     public class Log {
         public int Id { get; set; }
-        public LogType Type { get; set; }
+        public int Type { get; set; }   // enum
         public string Message { get; set; }
         public string Time { get; set; }
         public int UserId { get; set; }
@@ -17,7 +17,7 @@ namespace D3G.Data.Model {
             Random random = new Random();
             return new Log {
                 Id = index,
-                Type = (LogType)random.Next(0,2),
+                Type = random.Next(0,2),
                 Message = string.Format("message{0}", index),
                 Time = "now()",
                 UserId = userId,
@@ -30,6 +30,4 @@ namespace D3G.Data.Model {
             return string.Format(s, this.Id, this.Type, this.Message, this.Time, this.UserId, this.CacheId);
         }
     }
-
-    public enum LogType : int { Found = 0, NotFound, GeneralMessage }
 }

@@ -7,34 +7,28 @@ using System.Threading.Tasks;
 namespace D3G.Data.Model {
     public class Cache {
         public int Id { get; set; }
-        public CacheDifficulty Difficulty { get; set; }
-        public CacheTerrain Terrain { get; set; }
-        public CacheSize Size { get; set; }
-        public CacheType Type { get; set; }
+        public int Difficulty { get; set; } // enum
+        public int Terrain { get; set; }    // enum
+        public int Size { get; set; }       // enum
         public string Instructions { get; set; }
+        public int Type { get; set; }       // enum
         public int UserId { get; set; }
 
-        public static Cache Generate(int index, int userId) {
-            Random random = new Random();
+        public static Cache Generate(int index, int userId, Random random) {
             return new Cache {
                 Id = index,
-                Difficulty = (CacheDifficulty) random.Next(0,4),
-                Terrain = (CacheTerrain) random.Next(0,4),
-                Size = (CacheSize) random.Next(0,3),
-                Type = (CacheType) random.Next(0,1),
+                Difficulty = random.Next(0,4),
+                Terrain = random.Next(0,4),
+                Size = random.Next(0,3),
                 Instructions = string.Format("instruction{0}", index),
+                Type = random.Next(0, 1),
                 UserId = userId
             };
         }
 
         public override string ToString() {
-            string s = "({0}, {1}, {2}, {3}, {4}, \"{5}\", {6})";
-            return string.Format(s, this.Id, this.Difficulty, this.Terrain, this.Size, this.Type, this.Instructions, this.UserId);
+            string s = "({0}, {1}, {2}, {3}, \"{4}\", {5}, {6})";
+            return string.Format(s, this.Id, this.Difficulty, this.Terrain, this.Size, this.Instructions, this.Type, this.UserId);
         }
     }
-
-    public enum CacheTerrain : int { Easy = 0, Medium, Hard, Heroic, Legendary }
-    public enum CacheDifficulty : int { Easy = 0, Medium, Hard, Heroic, Legendary }
-    public enum CacheSize : int { Nano = 0, Micro, Regular, Huge }
-    public enum CacheType : int { Single = 0, Multi }
 }
