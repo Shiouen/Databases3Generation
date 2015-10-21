@@ -11,11 +11,11 @@ namespace D3G.Data.Model {
         public bool IsSpoiler { get; set; }
         public int CacheId { get; set; }
 
-        public static Hint Generate(int index, int cacheId) {
+        public static Hint Generate(int index, int cacheId, Random random) {
             return new Hint {
                 Id = index,
                 Message = string.Format("message{0}", index),
-                IsSpoiler = (index % 2 == 0) ? true : false,
+                IsSpoiler = (random.Next(0,4) == 3) ? true : false,
                 CacheId = cacheId
             };
         }

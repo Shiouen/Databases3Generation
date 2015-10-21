@@ -17,9 +17,9 @@ namespace D3G.Data.Model {
         public static Cache Generate(int index, int userId, Random random) {
             return new Cache {
                 Id = index,
-                Difficulty = random.Next(0, 4),
-                Terrain = random.Next(0, 4),
-                Size = random.Next(0, 3),
+                Difficulty = random.Next(0, 5),
+                Terrain = random.Next(0, 5),
+                Size = random.Next(0, 4),
                 Instructions = string.Format("instruction{0}", index),
                 Type = (index % 10 == 0) ? 1 : 0,
                 UserId = userId

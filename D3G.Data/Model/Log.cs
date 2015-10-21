@@ -16,7 +16,7 @@ namespace D3G.Data.Model {
         public static Log Generate(int index, int userId, int cacheId, Random random) {
             return new Log {
                 Id = index,
-                Type = random.Next(0,2),
+                Type = random.Next(0,3),
                 Message = string.Format("message{0}", index),
                 Time = "now()",
                 UserId = userId,

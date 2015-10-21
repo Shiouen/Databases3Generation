@@ -19,10 +19,10 @@ namespace D3G.Data.Model {
         public static Stage Generate(int index, Random random) {
             return new Stage {
                 Id = index,
-                Number = random.Next(1, 5),
+                Number = random.Next(1,6),
                 Description = string.Format("description{0}", index),
-                Type = random.Next(0, 1),
-                Visibility = random.Next(0, 2),
+                Type = random.Next(0,2),
+                Visibility = random.Next(0,3),
                 City = string.Format("city{0}", index),
                 Country = string.Format("country{0}", index),
                 Longitude = random.NextDouble(),
