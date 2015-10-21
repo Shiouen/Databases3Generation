@@ -9,14 +9,16 @@ namespace D3G.Data.Model {
         public int Id { get; set; }
         public int Number { get; set; }
         public string Description { get; set; }
-        public int Type { get; set; }             // enum
-        public int Visibility { get; set; } // enum
+        public int Type { get; set; }               // enum
+        public int Visibility { get; set; }         // enum
         public string City { get; set; }
         public string Country { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
+        public int? CacheId { get; set; }
+        public int? NextStageId { get; set; }
 
-        public static Stage Generate(int index, Random random) {
+        public static Stage Generate(int index, int? cacheId, int? nextStageId, Random random) {
             return new Stage {
                 Id = index,
                 Number = random.Next(1,6),
@@ -25,8 +27,10 @@ namespace D3G.Data.Model {
                 Visibility = random.Next(0,3),
                 City = string.Format("city{0}", index),
                 Country = string.Format("country{0}", index),
-                Longitude = random.NextDouble(),
-                Latitude = random.NextDouble(),
+                Longitude = Math.Round(random.Next(-179, 179) + random.NextDouble(), 6),
+                Latitude = Math.Round(random.Next(-89, 89) + random.NextDouble(), 6),
+                CacheId = cacheId,
+                NextStageId = nextStageId
             };
         }
 

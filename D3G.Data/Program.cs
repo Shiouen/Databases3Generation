@@ -23,7 +23,7 @@ namespace D3G.Data {
         public List<Subscription> Subscriptions { get; set; }
         public List<Cache> Caches { get; set; }
         public List<CacheAttribute> CacheAttributes { get; set; }
-        public List<D3G.Data.Model.Attribute> Attributes { get; set; }
+        public List<Model.Attribute> Attributes { get; set; }
         public List<Hint> Hints { get; set; }
         public List<Stage> Stages { get; set; }
 
@@ -37,7 +37,7 @@ namespace D3G.Data {
             this.Subscriptions = new List<Subscription>();
             this.Caches = new List<Cache>();
             this.CacheAttributes = new List<CacheAttribute>();
-            this.Attributes = new List<D3G.Data.Model.Attribute>();
+            this.Attributes = new List<Model.Attribute>();
             this.Hints = new List<Hint>();
             this.Stages = new List<Stage>();
         }
@@ -59,7 +59,6 @@ namespace D3G.Data {
 
             int cacheAmount = userAmount / 10;
             int logAmount = userAmount * 10;
-            int trackableAmount = 1000;
 
             int cacheId = 1;
             int hintId = 1;
@@ -67,6 +66,7 @@ namespace D3G.Data {
             int logTrackableId = 1;
             int messageId = 1;
             int questId = 1;
+            int stageId = 1;
             int subscriptionId = 1;
             int trackableId = 1;
             int userId = 1;
@@ -112,6 +112,16 @@ namespace D3G.Data {
                             this.Hints.Add(Hint.Generate(hintId++, cacheId, random));
                             this.Hints.Add(Hint.Generate(hintId++, cacheId, random));
                         }
+
+                        // semi randomised adding of cacheattributes
+                        if (cacheId % 6 == 0) {
+                            this.CacheAttributes.Add(CacheAttribute.Generate(random.Next(1,5), cacheId));
+                        }
+                        if (cacheId % 7 == 0) {
+                            this.CacheAttributes.Add(CacheAttribute.Generate(random.Next(5, 8), cacheId));
+                            this.CacheAttributes.Add(CacheAttribute.Generate(random.Next(8, 11), cacheId));
+                        }
+
                         ++cacheId;
                     }
 
@@ -123,7 +133,29 @@ namespace D3G.Data {
                 }
             }
 
-            return this;
+            // each cache gets its own stage and multicaches get a variable amount of stages
+            // also set attributes for stages in the mean time
+            foreach (Cache c in this.Caches) {
+                this.Stages.Add(Stage.Generate(stageId, c.Id, null, random));
+
+                if (c.Type == 1) {
+                    if (stageId % 5 == 0) {
+                        this.Stages.Add(Stage.Generate(stageId + 1, null, stageId++, random));
+                    }
+                    if (stageId % 3 == 0) {
+                        this.Stages.Add(Stage.Generate(stageId + 1, null, stageId++, random));
+                        this.Stages.Add(Stage.Generate(stageId + 1, null, stageId++, random));
+                    }
+                }
+
+            }
+
+            // add attributes
+            for (int attributeId = 0; attributeId <= 10; ++attributeId) {
+                this.Attributes.Add(Model.Attribute.Generate(attributeId));
+            }
+
+                return this;
         }
 
         public void WriteInserts(bool cleanUp) {
@@ -132,19 +164,20 @@ namespace D3G.Data {
 
             /* order is IMPORTANT */
             /*
-            this.Users.BuildAsQuery(builder, "user");
+             * this.Users.BuildAsQuery(builder, "user");
             this.Messages.BuildAsQuery(builder, "message");
             this.Caches.BuildAsQuery(builder, "cache");
+             */
             this.CacheAttributes.BuildAsQuery(builder, "cache_attribute");
             this.Attributes.BuildAsQuery(builder, "attribute");
-             */
+            /*
             this.Hints.BuildAsQuery(builder, "hint");
-            //this.Stages.BuildAsQuery(builder, "stage");
-            //this.Subscriptions.BuildAsQuery(builder, "subscription");
-            //this.Trackables.BuildAsQuery(builder, "trackable");
-            //this.Logs.BuildAsQuery(builder, "log");
-            //this.LogTrackables.BuildAsQuery(builder, "log_trackable");
-            //this.Quests.BuildAsQuery(builder, "quest");
+            this.Stages.BuildAsQuery(builder, "stage");
+            /*this.Subscriptions.BuildAsQuery(builder, "subscription");
+            this.Trackables.BuildAsQuery(builder, "trackable");
+            this.Logs.BuildAsQuery(builder, "log");
+            this.LogTrackables.BuildAsQuery(builder, "log_trackable");
+            this.Quests.BuildAsQuery(builder, "quest");*/
 
             using (StreamWriter writer = new StreamWriter(this.Path)) {
                 writer.Write(builder.ToString());
