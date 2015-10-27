@@ -139,22 +139,26 @@ namespace D3G.Data {
 
             // each cache gets its own stage and multicaches get a variable amount of stages
             // also set attributes for stages in the mean time
+            Stack<Stage> stages = new Stack<Stage>();
             foreach (Cache c in this.Caches) {
                 stageNumber = 1;
 
                 if (c.Type == 1) {
                     if (stageId % 5 == 0) {
-                        this.Stages.Add(Stage.Generate(stageId, stageNumber++, null, stageId++, this.places, random));
+                        stages.Push(Stage.Generate(stageId++, stageNumber++, null, stageId, this.places, random));
                     }
                     if (stageId % 3 == 0) {
-                        this.Stages.Add(Stage.Generate(stageId, stageNumber++, null, stageId++, this.places, random));
-                        this.Stages.Add(Stage.Generate(stageId, stageNumber++, null, stageId++, this.places, random));
+                        stages.Push(Stage.Generate(stageId++, stageNumber++, null, stageId, this.places, random));
+                        stages.Push(Stage.Generate(stageId++, stageNumber++, null, stageId, this.places, random));
                     }
                 }
 
-                this.Stages.Add(Stage.Generate(stageId++, stageNumber, c.Id, null, this.places, random));
-
+                stages.Push(Stage.Generate(stageId++, stageNumber, c.Id, null, this.places, random));
             }
+
+            // FILO stages to prevent FK constraint violations to 'nextStageId', which don't exist yet
+            int stageCount = stages.Count;
+            for (int i = 0; i < stageCount; ++i) { this.Stages.Add(stages.Pop()); }
 
             // add attributes
             for (int attributeId = 1; attributeId <= 10; ++attributeId) {

@@ -41,7 +41,8 @@ namespace D3G.Data.Model {
         public override string ToString() {
             string s = "({0}, {1}, \"{2}\", {3}, {4}, \"{5}\", \"{6}\", {7}, {8}, {9}, {10})";
             return string.Format(s, this.Id, this.Number, this.Description, this.Type, this.Visibility, this.City, this.Country, this.Longitude, this.Latitude,
-                this.CacheId, (this.NextStageId == null) ? "null" : this.NextStageId.ToString());
+                (this.CacheId == null) ? "null" : this.CacheId.ToString(),
+                (this.NextStageId == null) ? "null" : this.NextStageId.ToString());
         }
     }
 }
