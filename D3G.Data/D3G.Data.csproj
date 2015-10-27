@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="Extensions\TupleListExtensions.cs" />
     <Compile Include="Model\Attribute.cs" />
     <Compile Include="Model\Cache.cs" />
     <Compile Include="Model\CacheAttribute.cs" />

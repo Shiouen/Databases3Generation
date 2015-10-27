@@ -18,15 +18,19 @@ namespace D3G.Data.Model {
         public int? CacheId { get; set; }
         public int? NextStageId { get; set; }
 
-        public static Stage Generate(int index, int? cacheId, int? nextStageId, Random random) {
+        public static Stage Generate(int index, int number, int? cacheId, int? nextStageId, List<Tuple<string, string>> places, Random random) {
+            int i = random.Next(places.Count);
+            string country = places[i].Item1;
+            string city = places[i].Item2;
+
             return new Stage {
                 Id = index,
-                Number = random.Next(1,6),
+                Number = number,
                 Description = string.Format("description{0}", index),
                 Type = random.Next(0,2),
                 Visibility = random.Next(0,3),
-                City = string.Format("city{0}", index),
-                Country = string.Format("country{0}", index),
+                City = city,
+                Country = country,
                 Longitude = Math.Round(random.Next(-179, 179) + random.NextDouble(), 6),
                 Latitude = Math.Round(random.Next(-89, 89) + random.NextDouble(), 6),
                 CacheId = cacheId,
@@ -35,8 +39,9 @@ namespace D3G.Data.Model {
         }
 
         public override string ToString() {
-            string s = "({0}, {1}, \"{2}\", {3}, {4}, \"{5}\", \"{6}\", {7}, {8})";
-            return string.Format(s, this.Id, this.Number, this.Description, this.Type, this.Visibility, this.City, this.Country, this.Longitude, this.Latitude);
+            string s = "({0}, {1}, \"{2}\", {3}, {4}, \"{5}\", \"{6}\", {7}, {8}, {9}, {10})";
+            return string.Format(s, this.Id, this.Number, this.Description, this.Type, this.Visibility, this.City, this.Country, this.Longitude, this.Latitude,
+                this.CacheId, (this.NextStageId == null) ? "null" : this.NextStageId.ToString());
         }
     }
 }

@@ -13,6 +13,7 @@ using D3G.Data.Utility;
 namespace D3G.Data {
     public class Program {
         public string Path { get; set; }
+        private List<Tuple<string, string>> places;
 
         public List<User> Users { get; set; }
         public List<Message> Messages { get; set; }
@@ -57,6 +58,8 @@ namespace D3G.Data {
         public Program GenerateDatabase(int userAmount) {
             Random random = new Random();
 
+            this.initPlaces();
+
             int cacheAmount = userAmount / 10;
             int logAmount = userAmount * 10;
 
@@ -67,6 +70,7 @@ namespace D3G.Data {
             int messageId = 1;
             int questId = 1;
             int stageId = 1;
+            int stageNumber = 1;
             int subscriptionId = 1;
             int trackableId = 1;
             int userId = 1;
@@ -82,7 +86,7 @@ namespace D3G.Data {
                 // add subscription and go to next subscription
                 if (logId % 2 != 0) {
                     this.Subscriptions.Add(Subscription.Generate(subscriptionId++,
-                        cacheId + random.Next(cacheId, cacheAmount + 1),
+                        random.Next(1, cacheAmount + 1),
                         userId, random));
                 }
 
@@ -127,7 +131,7 @@ namespace D3G.Data {
 
                     // add a message to 1/100th of the users
                     // add message and go to next message
-                    if (userId % 100 == 0) { this.Messages.Add(Message.Generate(messageId, userId)); }
+                    if (userId % 100 == 0) { this.Messages.Add(Message.Generate(messageId++, userId)); }
 
                     ++userId;
                 }
@@ -136,22 +140,24 @@ namespace D3G.Data {
             // each cache gets its own stage and multicaches get a variable amount of stages
             // also set attributes for stages in the mean time
             foreach (Cache c in this.Caches) {
-                this.Stages.Add(Stage.Generate(stageId, c.Id, null, random));
+                stageNumber = 1;
 
                 if (c.Type == 1) {
                     if (stageId % 5 == 0) {
-                        this.Stages.Add(Stage.Generate(stageId + 1, null, stageId++, random));
+                        this.Stages.Add(Stage.Generate(stageId, stageNumber++, null, stageId++, this.places, random));
                     }
                     if (stageId % 3 == 0) {
-                        this.Stages.Add(Stage.Generate(stageId + 1, null, stageId++, random));
-                        this.Stages.Add(Stage.Generate(stageId + 1, null, stageId++, random));
+                        this.Stages.Add(Stage.Generate(stageId, stageNumber++, null, stageId++, this.places, random));
+                        this.Stages.Add(Stage.Generate(stageId, stageNumber++, null, stageId++, this.places, random));
                     }
                 }
+
+                this.Stages.Add(Stage.Generate(stageId++, stageNumber, c.Id, null, this.places, random));
 
             }
 
             // add attributes
-            for (int attributeId = 0; attributeId <= 10; ++attributeId) {
+            for (int attributeId = 1; attributeId <= 10; ++attributeId) {
                 this.Attributes.Add(Model.Attribute.Generate(attributeId));
             }
 
@@ -163,25 +169,59 @@ namespace D3G.Data {
             this.Path = String.Format("{0}../../{1}", AppDomain.CurrentDomain.BaseDirectory, "Files/inserts.sql");
 
             /* order is IMPORTANT */
-            /*
-             * this.Users.BuildAsQuery(builder, "user");
+            this.Users.BuildAsQuery(builder, "user");
             this.Messages.BuildAsQuery(builder, "message");
             this.Caches.BuildAsQuery(builder, "cache");
-             */
-            this.CacheAttributes.BuildAsQuery(builder, "cache_attribute");
             this.Attributes.BuildAsQuery(builder, "attribute");
-            /*
+            this.CacheAttributes.BuildAsQuery(builder, "cache_attribute");
             this.Hints.BuildAsQuery(builder, "hint");
             this.Stages.BuildAsQuery(builder, "stage");
-            /*this.Subscriptions.BuildAsQuery(builder, "subscription");
+            this.Subscriptions.BuildAsQuery(builder, "subscription");
             this.Trackables.BuildAsQuery(builder, "trackable");
             this.Logs.BuildAsQuery(builder, "log");
             this.LogTrackables.BuildAsQuery(builder, "log_trackable");
-            this.Quests.BuildAsQuery(builder, "quest");*/
+            this.Quests.BuildAsQuery(builder, "quest");
 
             using (StreamWriter writer = new StreamWriter(this.Path)) {
                 writer.Write(builder.ToString());
             }
+        }
+
+        private Program initPlaces() {
+            this.places = new List<Tuple<string, string>>();
+            string[] countries = { "Belgium", "France", "Indonesia", "Japan", "United Kingdom" };
+
+            places.Add(countries[0], "Antwerp");
+            places.Add(countries[0], "Brugge");
+            places.Add(countries[0], "Brussels");
+            places.Add(countries[0], "Limburg");
+            places.Add(countries[0], "Ghent");
+
+            places.Add(countries[1], "Paris");
+            places.Add(countries[1], "Lille");
+            places.Add(countries[1], "Bordeaux");
+            places.Add(countries[1], "Versailles");
+            places.Add(countries[1], "Nice");
+
+            places.Add(countries[2], "Jakarta");
+            places.Add(countries[2], "Semarang");
+            places.Add(countries[2], "Banjarbaru");
+            places.Add(countries[2], "Makassar");
+            places.Add(countries[2], "Bira");
+
+            places.Add(countries[3], "Tokyo");
+            places.Add(countries[3], "Osaka");
+            places.Add(countries[3], "Kyoto");
+            places.Add(countries[3], "Koyasan");
+            places.Add(countries[3], "Hiroshima");
+
+            places.Add(countries[4], "London");
+            places.Add(countries[4], "Hatfield");
+            places.Add(countries[4], "Manchester");
+            places.Add(countries[4], "Birmingham");
+            places.Add(countries[4], "Gloucestershire");
+
+            return this;
         }
     }
 }

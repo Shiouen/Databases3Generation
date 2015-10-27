@@ -20,7 +20,7 @@ namespace D3G.Data.Model {
 
         public override string ToString() {
             string s = "({0}, {1}, {2})";
-            return string.Format(s, this.Id, this.UserId, this.CacheId);
+            return string.Format(s, this.Id, this.CacheId, this.UserId);
         }
     }
 }

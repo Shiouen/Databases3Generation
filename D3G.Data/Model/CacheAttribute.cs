@@ -18,7 +18,7 @@ namespace D3G.Data.Model {
 
         public override string ToString() {
             string s = "({0}, {1})";
-            return string.Format(s, this.AttributeId, this.CacheId);
+            return string.Format(s, this.CacheId, this.AttributeId);
         }
     }
 }
