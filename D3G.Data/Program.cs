@@ -61,7 +61,9 @@ namespace D3G.Data {
             this.initPlaces();
 
             int cacheAmount = userAmount / 10;
-            int logAmount = userAmount * 10;
+            int maxLogAmount = userAmount * 10;
+            int trackableLogAmount = 1000 * 10;
+            int logAmount = maxLogAmount - trackableLogAmount;
 
             int cacheId = 1;
             int hintId = 1;
@@ -76,7 +78,7 @@ namespace D3G.Data {
             int userId = 1;
 
             // logs, users, quests and caches
-            for (logId = 1; logId <= logAmount; ++logId) {
+            for (logId = 1; logId <= maxLogAmount; ++logId) {
                 // add a quest for half of the logs
                 // add quest and go to next quest
                 if (logId % 2 == 0) { this.Quests.Add(Quest.Generate(questId++, userId, logId)); }
@@ -91,7 +93,9 @@ namespace D3G.Data {
                 }
 
                 // add log
-                this.Logs.Add(Log.Generate(logId, userId, cacheId, random));
+                if (logId <= logAmount) {
+                    this.Logs.Add(Log.Generate(logId, userId, cacheId, random));
+                }
 
                 // add trackable for 1/1000th of logs (resulting in 1000 trackables)
                 // add trackable with random current user and cache, and got to next cache
@@ -165,7 +169,24 @@ namespace D3G.Data {
                 this.Attributes.Add(Model.Attribute.Generate(attributeId));
             }
 
-                return this;
+            logId = logAmount + 1;
+            foreach (Trackable trackable in this.Trackables) {
+
+                for (int i = 0; i < 5; ++i) {
+                    userId = random.Next(userAmount + 1);
+                    cacheId = random.Next(cacheAmount + 1);
+
+                    // put in
+                    this.Logs.Add(Model.Log.Generate(logId, userId, cacheId, random));
+                    this.LogTrackables.Add(Model.LogTrackable.Generate(logTrackableId, logId++, trackable.Id, false));
+
+                    userId = random.Next(userAmount + 1);
+                    // taken out
+                    this.Logs.Add(Model.Log.Generate(logId, userId, cacheId, random));
+                    this.LogTrackables.Add(Model.LogTrackable.Generate(logTrackableId, logId++, trackable.Id, true));
+                }
+            }
+            return this;
         }
 
         public void WriteInserts(bool cleanUp) {

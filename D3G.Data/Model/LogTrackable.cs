@@ -10,11 +10,11 @@ namespace D3G.Data.Model {
         public int TrackableId { get; set; }
         public bool IsTakenOut { get; set; }
 
-        public static LogTrackable Generate(int index, int logId, int trackableId) {
+        public static LogTrackable Generate(int index, int logId, int trackableId, bool isTakenOut) {
             return new LogTrackable {
                 LogId = logId,
                 TrackableId = trackableId,
-                IsTakenOut = (index % 2 == 0) ? false : true,
+                IsTakenOut = isTakenOut,
             };
         }
 
